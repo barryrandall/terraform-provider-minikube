@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/barryrandall/terraform-provider-minikube/minikube"
 	"github.com/hashicorp/terraform/plugin"
-	"github.com/jgensler8/terraform-provider-minikube/minikube"
 )
 
 func main() {
