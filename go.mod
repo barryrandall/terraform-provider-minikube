@@ -1,4 +1,4 @@
-module github.com/jgensler8/terraform-provider-minikube
+module github.com/barryrandall/terraform-provider-minikube
 
 require (
 	cloud.google.com/go v0.30.0 // indirect
