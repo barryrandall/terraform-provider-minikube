@@ -5,7 +5,7 @@ BINARY=terraform-provider-minikube_${RELEASE_VERSION}_x4
 LINUX_RELEASE=terraform-provider-minikube_${RELEASE_VERSION}_linux_${GOARCH}
 MAC_RELEASE=terraform-provider-minikube_${RELEASE_VERSION}_darwin_${GOARCH}
 
-default: deps assets_hack linux mac stage
+default: deps linux mac stage
 
 deps:
 	go get -d -v ./...

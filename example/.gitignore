@@ -1,2 +1,4 @@
 .terraform/
 plugins/
+terraform.tfstate
+terraform.tfstate.backup

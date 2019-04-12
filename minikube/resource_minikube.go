@@ -1,6 +1,7 @@
 package minikube
 
 import (
+	b64 "encoding/base64"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -11,15 +12,14 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	b64 "encoding/base64"
 
 	"github.com/blang/semver"
-	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/docker/machine/libmachine/state"
+	"github.com/hashicorp/terraform/helper/schema"
 	"k8s.io/minikube/cmd/minikube/cmd"
+	cmdUtil "k8s.io/minikube/cmd/util"
 	cmdutil "k8s.io/minikube/cmd/util"
 	"k8s.io/minikube/pkg/minikube/cluster"
-	cmdUtil "k8s.io/minikube/cmd/util"
 	cfg "k8s.io/minikube/pkg/minikube/config"
 	"k8s.io/minikube/pkg/minikube/constants"
 	"k8s.io/minikube/pkg/minikube/machine"
@@ -30,7 +30,7 @@ import (
 
 var (
 	clusterBootstrapper string = "kubeadm"
-	profile string = "minikube"
+	profile             string = "minikube"
 )
 
 func resourceMinikube() *schema.Resource {
@@ -143,8 +143,8 @@ Valid components are: kubelet, apiserver, controller-manager, etcd, proxy, sched
 			},
 			"iso_url": {
 				Type:        schema.TypeString,
-				Description: "Location of the minikube iso (default \"https://storage.googleapis.com/minikube/iso/minikube-v0.23.5.iso\")",
-				Default:     "https://storage.googleapis.com/minikube/iso/minikube-v0.23.5.iso",
+				Description: "Location of the minikube iso (default \"https://storage.googleapis.com/minikube/iso/minikube-v1.0.0.iso\")",
+				Default:     "https://storage.googleapis.com/minikube/iso/minikube-v1.0.0.iso",
 				ForceNew:    true,
 				Optional:    true,
 			},
@@ -304,17 +304,20 @@ func resourceMinikubeCreate(d *schema.ResourceData, meta interface{}) error {
 	disableDriverMounts := d.Get("disable_driver_mounts").(bool)
 	diskSize := d.Get("disk_size").(string)
 	dnsDomain := d.Get("dns_domain").(string)
-	dockerEnv, ok := d.GetOk("docker_env"); if ! ok {
+	dockerEnv, ok := d.GetOk("docker_env")
+	if !ok {
 		dockerEnv = []string{}
 	}
-	dockerOpt, ok := d.GetOk("docker_opt"); if ! ok {
+	dockerOpt, ok := d.GetOk("docker_opt")
+	if !ok {
 		dockerOpt = []string{}
 	}
 	//extraConfig := d.Get("extra_config").(string)
 	featureGates := d.Get("feature_gates").(string)
 	hostOnlyCIDR := d.Get("host_only_cidr").(string)
 	hypervVirtualSwitch := d.Get("hyperv_virtual_switch").(string)
-	insecureRegistry, ok := d.GetOk("insecure_registry"); if ! ok {
+	insecureRegistry, ok := d.GetOk("insecure_registry")
+	if !ok {
 		insecureRegistry = []string{"10.0.0.0/24"}
 	}
 	isoURL := d.Get("iso_url").(string)
@@ -325,7 +328,8 @@ func resourceMinikubeCreate(d *schema.ResourceData, meta interface{}) error {
 	mount := d.Get("mount").(bool)
 	mountString := d.Get("mount_string").(string)
 	networkPlugin := d.Get("network_plugin").(string)
-	registryMirror, ok := d.GetOk("registry_mirror"); if ! ok {
+	registryMirror, ok := d.GetOk("registry_mirror")
+	if !ok {
 		registryMirror = []string{}
 	}
 	vmDriver := d.Get("vm_driver").(string)
@@ -423,15 +427,15 @@ func resourceMinikubeCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	kubernetesConfig := cfg.KubernetesConfig{
-		KubernetesVersion:      selectedKubernetesVersion,
-		NodeIP:                 ip,
-		NodeName:               cfg.GetMachineName(),
-		APIServerName:          apiserverName,
-		DNSDomain:              dnsDomain,
-		FeatureGates:           featureGates,
-		ContainerRuntime:       containerRuntime,
-		NetworkPlugin:          networkPlugin,
-		ServiceCIDR:            pkgutil.DefaultServiceCIDR,
+		KubernetesVersion: selectedKubernetesVersion,
+		NodeIP:            ip,
+		NodeName:          cfg.GetMachineName(),
+		APIServerName:     apiserverName,
+		DNSDomain:         dnsDomain,
+		FeatureGates:      featureGates,
+		ContainerRuntime:  containerRuntime,
+		NetworkPlugin:     networkPlugin,
+		ServiceCIDR:       pkgutil.DefaultServiceCIDR,
 		//ExtraOptions:           extraConfig,
 		ShouldLoadCachedImages: cacheImages,
 	}
